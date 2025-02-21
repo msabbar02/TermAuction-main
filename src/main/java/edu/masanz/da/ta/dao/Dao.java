@@ -34,14 +34,56 @@ public class Dao {
 
     private static void iniMapaUsuarios() {
         // TODO 01 iniMapaUsuarios
+        String splitter = SPLITTER;
+        mapaUsuarios = new HashMap<>();
+        for (String usuario : USUARIOS){
+            String[] partes = usuario.split(splitter);
+            String nombre = partes[0];
+            String sal = partes[1];
+            String hash = partes[2];
+            String rol = partes[3];
+            Usuario nuevoUsuario = new Usuario(nombre,sal,hash,rol);
+            mapaUsuarios.put(nombre,nuevoUsuario);
+        }
     }
 
     private static void iniMapaItems() {
         // TODO 02 iniMapaItems
+        String splitter = SPLITTER;
+        mapaItems = new HashMap<>();
+        for (String item : ITEMS){
+            String [] datos = item.split(splitter);
+            long id = Long.parseLong(datos[0]);
+            String nombre = datos[1];
+            String desc = datos[2];
+            int precio = Integer.parseInt(datos[3]);
+            String foto = datos[4];
+            String nombreUsuario = datos[5];
+            int estado = Integer.parseInt(datos[6]);
+            boolean historico = Boolean.parseBoolean(datos[7]);
+            Item nuevoItem = new Item(id,nombre,desc,precio,foto,nombreUsuario,estado,historico);
+            mapaItems.put(id,nuevoItem);
+        }
     }
 
     private static void iniMapaPujas() {
         // TODO 03 iniMapaPujas
+        String splitter = SPLITTER;
+        mapaPujas = new HashMap<>();
+        long contador = 1;
+        List<Puja> pujas;
+        for (String puja : PUJAS){
+         String [] datos = puja.split(splitter);
+         pujas = new ArrayList<>();
+         long idItem = Long.parseLong(datos[0]);
+         String nobmbreUsaurio = datos[1];
+         int precio = Integer.parseInt(datos[2]);
+         String fecha = datos[3];
+         Puja puja1 = new Puja(idItem,nobmbreUsaurio,precio,fecha);
+         pujas.add(puja1);
+         mapaPujas.put(contador,pujas);
+         contador++;
+        }
     }
     //endregion
 
