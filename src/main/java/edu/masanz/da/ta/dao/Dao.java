@@ -120,12 +120,30 @@ public class Dao {
 
     public static boolean crearUsuario(String nombre, String password, boolean esAdmin) {
         // TODO 07 crearUsuario
+        if (mapaUsuarios.containsKey(nombre)){
+            return false;
+        }
+        String salt = Security.generateSalt();
+        String hashPwSal = Security.hash(password);
+        String rol = esAdmin ? "Admin" : "User";
+        Usuario nuevoUsuario = new Usuario(nombre,salt,hashPwSal,rol);
+        mapaUsuarios.put(nombre,nuevoUsuario);
         return true;
     }
 
     public static boolean modificarPasswordUsuario(String nombre, String password) {
         // TODO 08 modificarPasswordUsuario
-        return false;
+        if(!mapaUsuarios.containsKey(nombre)){
+            return false;
+        }
+        Usuario usuario = mapaUsuarios.get(nombre);
+        String nuevoSalt = Security.generateSalt();
+        String nuevoHashSalt = Security.hash(password);
+
+        Usuario usuarioActualizado = new Usuario(usuario.getNombre(),nuevoSalt,nuevoHashSalt,usuario.getRol());
+        mapaUsuarios.put(usuario.getNombre(), usuarioActualizado);
+        return true;
+
     }
 
     public static boolean modificarRolUsuario(String nombre, String rol) {
