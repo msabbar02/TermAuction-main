@@ -142,6 +142,7 @@ public class Dao {
 
         Usuario usuarioActualizado = new Usuario(usuario.getNombre(),nuevoSalt,nuevoHashSalt,usuario.getRol());
         mapaUsuarios.put(usuario.getNombre(), usuarioActualizado);
+
         return true;
 
     }
