@@ -91,18 +91,31 @@ public class Dao {
     public static boolean autenticar(String nombreUsuario, String password) {
 //        return password.equals("1234");
         // TODO 04 autenticar
-        return false;
+        if (!mapaUsuarios.containsKey(nombreUsuario)){
+            return false;
+        }
+        Usuario usuario = mapaUsuarios.get(nombreUsuario);
+        return Security.validateHashedPasswordSalt(password,usuario.getSal(),usuario.getHashPwSal());
     }
 
     public static boolean esAdmin(String nombreUsuario) {
 //        return nombreUsuario.equalsIgnoreCase("Admin");
         // TODO 05 esAdmin
-        return false;
+        if (!mapaUsuarios.containsKey(nombreUsuario)){
+            return false;
+        }
+        Usuario usuario = mapaUsuarios.get(nombreUsuario);
+        return usuario.getRol().equalsIgnoreCase("Admin");
     }
 
     public static List<Usuario> obtenerUsuarios() {
         // TODO 06 obtenerUsuarios
-        return null;
+        List<Usuario> usuarios = new ArrayList<>();
+        if (mapaUsuarios.isEmpty()) {
+            return null;
+        }
+        usuarios.addAll(mapaUsuarios.values());
+        return usuarios;
     }
 
     public static boolean crearUsuario(String nombre, String password, boolean esAdmin) {
