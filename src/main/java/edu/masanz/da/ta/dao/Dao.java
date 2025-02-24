@@ -149,11 +149,21 @@ public class Dao {
 
     public static boolean modificarRolUsuario(String nombre, String rol) {
         // TODO 09 modificarRolUsuario
-        return false;
+        if (!mapaUsuarios.containsKey(nombre)){
+            return false;
+        }
+        Usuario usuario = mapaUsuarios.get(nombre);
+        Usuario usuarioNuevoRol = new Usuario(usuario.getNombre(), usuario.getSal(), usuario.getHashPwSal(), rol);
+        mapaUsuarios.put(usuario.getNombre(),usuarioNuevoRol);
+        return true;
     }
 
     public static boolean eliminarUsuario(String nombre) {
         // TODO 10 eliminarUsuario
+        if (!mapaUsuarios.containsKey(nombre)){
+            return false;
+        }
+        mapaUsuarios.remove(nombre);
         return true;
     }
 
