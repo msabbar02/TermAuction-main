@@ -5,7 +5,6 @@ import edu.masanz.da.ta.utils.Security;
 
 import java.util.*;
 
-import static edu.masanz.da.ta.conf.Ctes.*;
 import static edu.masanz.da.ta.conf.Ini.*;
 
 /**
@@ -70,19 +69,17 @@ public class Dao {
         // TODO 03 iniMapaPujas
         String splitter = SPLITTER;
         mapaPujas = new HashMap<>();
-        long contador = 1;
-        List<Puja> pujas;
         for (String puja : PUJAS){
-         String [] datos = puja.split(splitter);
-         pujas = new ArrayList<>();
-         long idItem = Long.parseLong(datos[0]);
-         String nobmbreUsaurio = datos[1];
-         int precio = Integer.parseInt(datos[2]);
-         String fecha = datos[3];
-         Puja puja1 = new Puja(idItem,nobmbreUsaurio,precio,fecha);
-         pujas.add(puja1);
-         mapaPujas.put(contador,pujas);
-         contador++;
+            String[] datos = puja.split(splitter);
+            long idItem = Long.parseLong(datos[0]);
+            String nombreUsuario = datos[1];
+            int precio = Integer.parseInt(datos[2]);
+            String instante = datos[3];
+            Puja nuevaPuja = new Puja(idItem,nombreUsuario,precio,instante);
+            if (!mapaPujas.containsKey(idItem)){
+                mapaPujas.put(idItem,new ArrayList<>());
+            }
+            mapaPujas.get(idItem).add(nuevaPuja);
         }
     }
     //endregion
@@ -140,8 +137,8 @@ public class Dao {
         String nuevoSalt = Security.generateSalt();
         String nuevoHashSalt = Security.hash(password);
 
-        Usuario usuarioActualizado = new Usuario(usuario.getNombre(),nuevoSalt,nuevoHashSalt,usuario.getRol());
-        mapaUsuarios.put(usuario.getNombre(), usuarioActualizado);
+        Usuario usuarioModificado = new Usuario(usuario.getNombre(),nuevoSalt,nuevoHashSalt,usuario.getRol());
+        mapaUsuarios.put(usuario.getNombre(), usuarioModificado);
 
         return true;
 
@@ -172,16 +169,43 @@ public class Dao {
     //region Validación de artículos
     public static List<Item> obtenerArticulosPendientes() {
         // TODO 11 obtenerArticulosPendientes
-        return null;
+        List<Item> items = new ArrayList<>();
+        if (mapaItems.isEmpty()){
+            return null;
+        }
+        for (Item item : mapaItems.values()){
+            if (item.getEstado() == 0){
+                items.add(item);
+            }
+        }
+        return items;
     }
 
     public static boolean validarArticulo(long id, boolean valido) {
         // TODO 12 validarArticulo
-        return false;
+        if (!mapaItems.containsKey(id)){
+            return false;
+        }
+        Item item = mapaItems.get(id);
+        if (valido){
+            item.setEstado(1);
+        } else {
+            item.setEstado(-1);
+        }
+        return true;
+
     }
 
     public static boolean validarTodos() {
         // TODO 13 validarTodos
+        if (mapaItems.isEmpty()){
+            return false;
+        }
+        for (Item item : mapaItems.values()){
+            if (item.getEstado() == 0){
+                item.setEstado(1);
+            }
+        }
         return true;
     }
     //endregion
@@ -189,7 +213,18 @@ public class Dao {
     //region Gestión de artículos y pujas de administrador
     public static List<ItemPujas> obtenerArticulosConPujas() {
         // TODO 14 obtenerArticulosConPujas
-        return null;
+        List<ItemPujas> itemsPujas = new ArrayList<>();
+        if (mapaItems.isEmpty()){
+            return null;
+        }
+        for (Item item : mapaItems.values()){
+            if (mapaPujas.containsKey(item.getId())){
+                List<Puja> pujas = mapaPujas.get(item.getId());
+                ItemPujas itemPuj = new ItemPujas(item,pujas);
+                itemsPujas.add(itemPuj);
+            }
+        }
+        return itemsPujas;
     }
 
     public static boolean resetearSubasta() {
